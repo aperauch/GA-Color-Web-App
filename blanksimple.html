@@ -1,0 +1,72 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<title>GA Colors - Simple Example</title>
+	<script type="text/javascript" src="FlexiColorPicker/colorpicker.js"></script>
+	<link rel="stylesheet" type="text/css" href="FlexiColorPicker/themes.css" />
+	<script type="text/javascript">
+		function get_browser(){
+		    var N=navigator.appName, ua=navigator.userAgent, tem;
+		    var M=ua.match(/(opera|chrome|safari|firefox|msie)\/?\s*(\.?\d+(\.\d+)*)/i);
+		    if(M && (tem= ua.match(/version\/([\.\d]+)/i))!= null) M[2]= tem[1];
+		    M=M? [M[1], M[2]]: [N, navigator.appVersion, '-?'];
+		    return M[0];
+	    }
+
+		function get_browser_version(){
+		    var N=navigator.appName, ua=navigator.userAgent, tem;
+		    var M=ua.match(/(opera|chrome|safari|firefox|msie)\/?\s*(\.?\d+(\.\d+)*)/i);
+		    if(M && (tem= ua.match(/version\/([\.\d]+)/i))!= null) M[2]= tem[1];
+		    M=M? [M[1], M[2]]: [N, navigator.appVersion, '-?'];
+		    return M[1];
+	    }
+	</script>
+</head>
+<body>
+
+	<!-- Begin detect browser and version -->
+	<div id="BrowserVersion"></div>
+	<script type="text/javascript">
+		document.getElementById("BrowserVersion").innerHTML=get_browser() + " " + get_browser_version();
+	</script>
+	<!-- End detect browser and version -->
+
+	<!-- Begin GA Controls -->
+	<div id="gaControls">
+
+		<!-- Begin Color Picker -->
+		<div id="pickerDisplay">
+			<div id="color-picker" class="cp-default"></div>
+		    <script type="text/javascript">
+		      ColorPicker(
+		        document.getElementById('color-picker'),
+		        function(hex, hsv, rgb) {
+		            var gaBGColor = document.getElementById("gaControls");
+		            gaBGColor.style.backgroundColor = hex;
+		            document.getElementById("targetColor").value = hex;
+		        });
+		    </script>
+		</div>
+	    <!-- End Color Picker -->
+
+	    <!-- Begin GA Form -->
+	    <div id="formDisplay">
+			<form id="parameter_form" action="/simple" method="post">
+				<div>Select your favorite color:  <input type="color" name="targetColor" id="targetColor" value="#fff"></div><br>
+				<div>Starting population size:  <input type="number" name="popSize" id="popSize" min="10" max="10000" value="100"></div><br>
+				<div>Number of generations:  <input type="number" name="numGens" id="numGens" min="15" max="100" value="50"></div><br>
+				<div>Max difference:  <input type="number" name="maxDiff" id="maxDiff" min="0" max="24" value="10"></div><br>
+				<div>Scale:  <input type="range" name="scaleSize" id="scaleSize" min="1" max="100" value="15"></div><br>
+				<div><input type="submit" value="Submit"></div><br>
+			</form>
+		</div>
+		<!-- End GA Form -->
+
+	</div>
+	<!-- Eng GA Controls -->
+
+</body>
+</html>

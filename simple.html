@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html lang="en">
+<head>
+	<title>GA Colors - Simple Example</title>
+	<script type="text/javascript" src="FlexiColorPicker/colorpicker.js"></script>
+	<link rel="stylesheet" type="text/css" href="FlexiColorPicker/themes.css" />
+</head>
+<body>
+
+	<div id="mainContainer">
+	<!-- Begin GA Controls -->
+	<div id="gaControls" backgroundColor="{{ targetColor }}">
+
+		<!-- Begin Color Picker -->
+		<div id="pickerDisplay">
+			<div id="color-picker" class="cp-default"></div>
+		    <script type="text/javascript">
+		      ColorPicker(
+		        document.getElementById('color-picker'),
+		        function(hex, hsv, rgb) {		            
+		            var gaBGColor = document.getElementById("gaControls");
+		            gaBGColor.style.backgroundColor = hex;
+		            document.getElementById("targetColor").value = hex;
+		        });
+		    </script>
+		</div>
+	    <!-- End Color Picker -->
+
+	    <!-- Begin GA Form -->
+	    <div id="formDisplay">
+			<form id="parameter_form" action="/simple" method="post">
+				<div>Select your favorite color:  <input type="color" name="targetColor" id="targetColor" value="{{ targetColor }}"></div><br>
+				<div>Starting population size:  <input type="number" name="popSize" id="popSize" min="10" max="10000" value="{{ popSize }}"></div><br>
+				<div>Number of generations:  <input type="number" name="numGens" id="numGens" min="10" max="100" value="{{ numGens }}"></div><br>
+				<div>Max difference:  <input type="number" name="maxDiff" id="maxDiff" min="0" max="24" value="{{ maxDiff }}"></div><br>
+				<div>Scale:  <input type="range" name="scaleSize" id="scaleSize" min="1" max="100" value="{{ scaleSize }}"></div><br>
+				<div><input type="submit" value="Submit"></div><br>
+			</form>
+		</div>
+		<!-- End GA Form -->
+
+	</div>
+	<!-- Eng GA Controls -->
+
+	<div id="canvasContainer">
+		<canvas id="myCanvas" width="{{ canvasWidth }}" height="{{ canvasHeight }}" style="border:1px solid black">
+			<p>Your browser does not support the HTML5 canvas tag.</p>
+		</canvas>
+	</div>
+	
+	<script type = "text/javascript">
+		document.getElementById("myCanvas").style.background ='black';
+
+		// get field parameters
+		var color = "{{ targetColor }}";
+		var size = {{ popSize }};
+		var largestPop = {{ largestPop }};
+		var gens = {{ numGens }};
+		var scale = {{ scaleSize }};
+		var evo = {{ evolution | safe }};
+
+		// get canvas element.
+		var elem = document.getElementById("myCanvas");
+
+		// check if context exist
+		if (elem.getContext) {
+			var rects = CreateShapes(gens, scale, evo);
+		   	context = elem.getContext('2d');
+			DrawShapes(rects);
+		}
+
+		function Shape(x, y, w, h, fill) {
+		    this.x = x;
+		    this.y = y;
+		    this.w = w;
+		    this.h = h;
+		    this.fill = fill;
+		}
+
+		function CreateShapes(generations, rectScale, evolution) {
+			var xPos = 0;
+			var yPos = generations * rectScale - rectScale;
+		    var myRect = [];
+			
+			for (var i = 0; i < evolution.length; i++) {
+				var sGeneration = evolution[i];
+				for (var j = 0; j < sGeneration.length; j++) {
+		    		myRect.push(new Shape(xPos, yPos, rectScale, rectScale, sGeneration[j]));
+		    		xPos += rectScale;
+		    		console.log(xPos + " " + yPos + " " + rectScale + " " + rectScale + " " + sGeneration[j]);
+		    	}
+		    	xPos = 0;
+		    	yPos -= rectScale;
+		    }
+		    
+		    return myRect;
+		}
+
+		function DrawShapes(myRect) {
+			for (var i in myRect) {
+		        oRec = myRect[i];
+		        context.fillStyle = oRec.fill;
+		        context.fillRect(oRec.x, oRec.y, oRec.w, oRec.h);
+		    }
+		}
+	</script>
+</div>
+</body>
+</html>
+{% endautoescape %}
